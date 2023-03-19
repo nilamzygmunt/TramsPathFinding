@@ -11,7 +11,7 @@ public class Graph
     {
         Vertex start = vertices.get(startStop);
         Vertex destination = vertices.get(endStop);
-        start.addNeighbour(new Edge(destination, startTime, endTime, line, company));
+        start.addNeighbour(new Edge(start, destination, startTime, endTime, line, company));
     }
     public Vertex getVertex(String stop)
     {
@@ -35,6 +35,7 @@ public class Graph
             v.printVertex();
         }
     }
+
 
 
 }

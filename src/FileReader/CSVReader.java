@@ -12,6 +12,9 @@ public class CSVReader
     private String delimeter = ",";
     private String line, word;
     private String [] rowdata = new String[13];
+
+    HashMap<String, String> xCoordinates = new HashMap<String, String>();
+    HashMap<String, String> yCoordinates = new HashMap<String, String>();
     List<String []> data = new ArrayList<String []>();
 
     public void read(String file) throws IOException
@@ -45,6 +48,8 @@ public class CSVReader
         for(int i = 0; i <data.size(); i++)
         {
             stopSet.add(data.get(i)[5]);
+            xCoordinates.put(data.get(i)[5], data.get(i)[7]);
+            yCoordinates.put(data.get(i)[5], data.get(i)[8]);
         }
         return stopSet;
     }
@@ -54,7 +59,7 @@ public class CSVReader
         Map<String, Vertex> vertices = new HashMap<String, Vertex>();
         for(String s : stops)
         {
-            vertices.put(s, new Vertex(s));
+            vertices.put(s, new Vertex(s, convertToCoordinate(xCoordinates.get(s)), convertToCoordinate(yCoordinates.get(s))));
         }
         return vertices;
     }
@@ -63,5 +68,10 @@ public class CSVReader
         String [] array = new String[3];
         array = time.split(":");
         return 3600 *  (Integer.parseInt(array[0] ) % 24)  + 60 * (Integer.parseInt(array[1])) + (Integer.parseInt(array[2]));
+    }
+
+    public double convertToCoordinate(String text)
+    {
+        return Double.parseDouble(text);
     }
 }

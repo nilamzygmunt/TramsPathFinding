@@ -1,26 +1,26 @@
 package Graph;
 
-public class Edge {
+public class Edgecopy {
     private Vertex start;
     private Vertex endStop;
 
     public EdgeDistanceCounting edgeDistanceCounting = new TransferDistanceCounting();
 
-    public Edge getParentEdge() {
+    public Edgecopy getParentEdge() {
         return parentEdge;
     }
 
-    public void setParentEdge(Edge parentEdge) {
+    public void setParentEdge(Edgecopy parentEdge) {
         this.parentEdge = parentEdge;
     }
 
-    private Edge parentEdge;
+    private Edgecopy parentEdge;
     private int startTime;
     private int endTime;
     private String line;
     private String company;
     private double cost;
-    Edge(Vertex start, Vertex endStop, int startTime, int endTime, String line, String company)
+    Edgecopy(Vertex start, Vertex endStop, int startTime, int endTime, String line, String company)
     {
         this.start = start;
         this.endStop= endStop;
@@ -74,24 +74,7 @@ public class Edge {
     }
 
     public void setCost(double previousEndTime, String line2) {
-        this.cost = Math.abs((endTime - previousEndTime)%(24*3600) )+ edgeDistanceCounting.calculateWaitingTime(startTime, previousEndTime, line ,line2);
-    }
-
-    public void setCost2(double previousEndTime, String previousLine)
-    {
-        System.out.println("times: "+previousEndTime + " " + startTime);
-        System.out.println("lines: "+previousLine + " " + line);
-        System.out.println(previousEndTime != startTime || !previousLine.equals(line));
-
-        if(previousEndTime != startTime || !previousLine.equals(line))
-        {
-            this.cost = 1;
-        }
-        this.cost = 0;
-    }
-    public void setCost2(int cost)
-    {
-        this.cost = cost;
+        this.cost = (endTime - previousEndTime)%(24*3600);
     }
 
     public void setStart(Vertex start) {

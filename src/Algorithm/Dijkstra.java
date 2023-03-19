@@ -1,6 +1,7 @@
 package Algorithm;
 import Graph.*;
 import FileReader.CSVReader;
+import kotlin.Triple;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -15,26 +16,25 @@ public class Dijkstra {
     public void loadGarph() throws IOException {
         CSVReader reader = new CSVReader();
         reader.read("connection_graph.csv");
-     //   reader.read("foo.csv");
+        //reader.read("foo.csv");
         graph = reader.createGraph();
 
     }
 
     public void findShortestPath(String source, String destination, int startTime)
     {
+        //jeszcze nocne
         Vertex startVertex = graph.getVertex(source);
         Vertex endVertex = graph.getVertex(destination);
-        //should it be edges??
-        HashMap<Vertex, Integer> Cost = new HashMap<Vertex, Integer>();
-        HashMap<Vertex, Integer> timeCost = new HashMap<Vertex, Integer>();
-        HashMap<Vertex, Integer> timeVisited = new HashMap<Vertex, Integer>();
+        HashMap<Vertex, Double> minTimeVisitedVertex = new HashMap<Vertex, Double>();
+        HashMap<Vertex, Edge> parentPath = new HashMap<Vertex, Edge>();
         HashSet<Vertex> unvisited = new HashSet<Vertex>();
         ArrayList<Edge> path = new ArrayList<Edge>();
         Vertex current;
 
         for(Vertex v : graph.getVertices().values())
         {
-            timeCost.put(v, Integer.MAX_VALUE);
+            minTimeVisitedVertex.put(v, Double.MAX_VALUE);
             unvisited.add(v);
         }
 //        for(Vertex v : graph.getVertices().values())
@@ -45,14 +45,16 @@ public class Dijkstra {
 //            }
 //        }
         current = startVertex;
-        timeCost.put(startVertex, 0);
-        timeVisited.put(startVertex, 0);
+       // timeCost.put(startVertex, 0);
+        minTimeVisitedVertex.put(startVertex, 0.0);
+        System.out.println("CURR: "+ current.getStop());
         while(unvisited.size() > 0)
         {
-            System.out.println("CURR: "+ current.getStop());
+
             if(!unvisited.contains(startVertex))
             {
-                current = getMinDistance(timeCost, unvisited);
+                current = getMinDistance(minTimeVisitedVertex, unvisited);
+                System.out.println("CURR: "+ current.getStop());
             }
             if(current == endVertex) {
                 break;
@@ -60,72 +62,66 @@ public class Dijkstra {
             unvisited.remove(current);
             for(Edge neighbour : current.getNeighbours())
             {
-                if(unvisited.contains(neighbour.getEndStop()))
+                if(unvisited.contains(neighbour.getEndStop()) && neighbour.getStartTime() >= startTime && neighbour.getStartTime() >= minTimeVisitedVertex.get(neighbour.getStart() ))
                 {
-                    //System.out.println("NEIGHBOUR: "+ neighbour.getEndStop().getStop());
-                    neighbour.setCost(timeVisited.get(current));
-//                    System.out.println("time Visited: "+ neighbour.getCost());
+                    System.out.println("NEIGHBOUR: "+ neighbour.toString());
+                    neighbour.setCost(minTimeVisitedVertex.get(neighbour.getStart()), "");
+                    System.out.println("visited: "+ minTimeVisitedVertex.get(neighbour.getStart()));
+                    System.out.println("neighbour cost + waiting time: "+ neighbour.getCost());
 //                    System.out.println("cost: "+ neighbour.getCost());
-                    int distanceToNeighbour = neighbour.getCost();
-                    if(distanceToNeighbour > 0)
+                    double timeToArriveAtNeighbourVertex = neighbour.getCost();
+                    if(timeToArriveAtNeighbourVertex > 0)
                     {
-                        int timeCostFromStart = timeCost.get(current) + distanceToNeighbour;
-                        if (timeCostFromStart < timeCost.get(neighbour.getEndStop()))
+                        double newTimeVisitedVertex = minTimeVisitedVertex.get(current) + timeToArriveAtNeighbourVertex;
+                        if (newTimeVisitedVertex < minTimeVisitedVertex.get(neighbour.getEndStop()))
                         {
-                            timeCost.put(neighbour.getEndStop(), timeCostFromStart);
-                            neighbour.setStart(current);
-                            timeVisited.put(neighbour.getEndStop(), neighbour.getEndTime());
+                           // timeCost.put(neighbour.getEndStop(), newTimeVisitedVertex);
+                            minTimeVisitedVertex.put(neighbour.getEndStop(), newTimeVisitedVertex);
+                            parentPath.put(neighbour.getEndStop(), neighbour);
                             path.add(neighbour);
                         }
                     }
                 }
             }
-        }
-        printPathToDestination(path,destination);
-    }
-
-    public void printPathToDestination(ArrayList<Edge> path, String destination)
-    {
-        int  minCost = Integer.MAX_VALUE;
-        Edge curr = null;
-        for(Edge e : path)
-        {
-            if (e.getEndStop().getStop().equals( destination) && e.getCost()<minCost)
+            for(Vertex v : minTimeVisitedVertex.keySet())
             {
-                curr = e;
-                minCost = e.getCost();
+                System.out.println("v: "+v.getStop() + " :  "+ minTimeVisitedVertex.get(v));
             }
         }
-        printPath(curr, path);
+        //printPathToDestination(path,destination);
+        printWell(parentPath, endVertex, startVertex);
     }
-    public void printPath(Edge curr, ArrayList<Edge> path)
+
+    private void printWell(HashMap<Vertex,Edge> parentPath, Vertex child, Vertex start)
     {
-        for(Edge e : path) {
-
-
-            if (e.getEndStop().getStop().equals(curr.getStart().getStop())) {
-                printPath(e, path);
-                break;
-            }
+        Vertex tmp = child;
+        if(parentPath.get(child) != null )
+        {
+            child = parentPath.get(child).getStart();
+            printWell(parentPath, child, start);
+            System.out.println("\u001B[35m"+parentPath.get(tmp).toString()+"\u001B[0m");
         }
-        System.out.println("\u001B[35m"+curr.toString()+"\u001B[0m");
+
+
     }
 
-    public Vertex getMinDistance(HashMap<Vertex, Integer> distances, HashSet<Vertex> unvisited)
+
+    public Vertex getMinDistance(HashMap<Vertex, Double> minTimeVisitedVertex, HashSet<Vertex> unvisited)
     {
-        int minDistance = Integer.MAX_VALUE;
+        double minDistance = Double.MAX_VALUE;
         Vertex minVertex = null;
         for (Vertex v : unvisited)
         {
-            if(distances.get(v) < minDistance)
+            if(minTimeVisitedVertex.get(v) < minDistance)
             {
-                minDistance = distances.get(v);
+                minDistance = minTimeVisitedVertex.get(v);
                 minVertex = v;
             }
         }
 
         return minVertex;
     }
-    
+
+
 
 }
