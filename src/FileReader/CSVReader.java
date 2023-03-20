@@ -1,9 +1,6 @@
 package FileReader;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import Graph.*;
@@ -27,6 +24,7 @@ public class CSVReader
         }
         data.remove(0);
         createGraph();
+        createGraph2();
     }
 
     public Graph createGraph()
@@ -45,11 +43,18 @@ public class CSVReader
     public HashSet<String> createUniqueStops(List<String[]> data)
     {
         HashSet<String> stopSet = new HashSet<String>();
-        for(int i = 0; i <data.size(); i++)
-        {
-            stopSet.add(data.get(i)[5]);
-            xCoordinates.put(data.get(i)[5], data.get(i)[7]);
-            yCoordinates.put(data.get(i)[5], data.get(i)[8]);
+        for (String[] datum : data) {
+            stopSet.add(datum[5]);
+            xCoordinates.put(datum[5], datum[7]);
+            yCoordinates.put(datum[5], datum[8]);
+        }
+        for (String[] datum : data) {
+            if(!stopSet.contains(datum[6]))
+            {
+                stopSet.add(datum[6]);
+                xCoordinates.put(datum[6], datum[9]);
+                yCoordinates.put(datum[6], datum[10]);
+            }
         }
         return stopSet;
     }
@@ -73,5 +78,45 @@ public class CSVReader
     public double convertToCoordinate(String text)
     {
         return Double.parseDouble(text);
+    }
+
+    public ArrayList<Graph2.Vertex> createGraph2()
+    {
+        ArrayList<Graph2.Vertex> graph2 = new ArrayList<Graph2.Vertex>();
+        for(String [] row : data)
+        {
+            graph2.add(new Graph2.Vertex(row[5], row[6], convertToSeconds(row[3]), convertToSeconds(row[4]), row[2], row[1], convertToCoordinate(row[9]), convertToCoordinate(row[10])));
+        }
+        return graph2;
+    }
+
+    public void makeATest(int testCaseNumber) throws IOException {
+        String fileName = "test"+testCaseNumber+".csv";
+        File csvFile = new File(fileName);
+        FileWriter fileWriter = new FileWriter(csvFile);
+
+        HashSet<String> stopSet = createUniqueStops(data);
+        ArrayList<String> stops = new ArrayList();
+        for(String stop : stopSet)
+        {
+            stops.add(stop);
+        }
+        int idx;
+        StringBuilder line = new StringBuilder();
+        Random rnd = new Random();
+        for(int i =0; i < testCaseNumber; i++)
+        {
+            idx = rnd.nextInt(stops.size());
+            line.append(stops.get(idx));
+            line.append(',');
+            idx = rnd.nextInt(stops.size());
+            line.append(stops.get(idx));
+            line.append(',');
+            line.append(rnd.nextInt(82800));
+            line.append("\n");
+
+        }
+        fileWriter.write(line.toString());
+        fileWriter.close();
     }
 }

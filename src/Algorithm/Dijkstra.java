@@ -1,18 +1,16 @@
 package Algorithm;
 import Graph.*;
 import FileReader.CSVReader;
-import kotlin.Triple;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.io.IOException;
-import java.util.Objects;
 
-public class Dijkstra {
+public class Dijkstra implements PathSearchingAlgorithm
+{
     Graph graph = new Graph();
-
+    private int counterVertex =0;
+    @Override
     public void loadGarph() throws IOException {
         CSVReader reader = new CSVReader();
         reader.read("connection_graph.csv");
@@ -21,41 +19,38 @@ public class Dijkstra {
 
     }
 
-    public void findShortestPath(String source, String destination, int startTime)
+    @Override
+    public void printGraph() {
+        graph.printGraph();
+    }
+
+    @Override
+    public void findShortestPath(String source, String destination, Integer startTime)
     {
         //jeszcze nocne
         Vertex startVertex = graph.getVertex(source);
         Vertex endVertex = graph.getVertex(destination);
-        HashMap<Vertex, Double> minTimeVisitedVertex = new HashMap<Vertex, Double>();
+        HashMap<Vertex, Integer> minTimeVisitedVertex = new HashMap<Vertex, Integer>();
         HashMap<Vertex, Edge> parentPath = new HashMap<Vertex, Edge>();
         HashSet<Vertex> unvisited = new HashSet<Vertex>();
-        ArrayList<Edge> path = new ArrayList<Edge>();
         Vertex current;
 
         for(Vertex v : graph.getVertices().values())
         {
-            minTimeVisitedVertex.put(v, Double.MAX_VALUE);
+            minTimeVisitedVertex.put(v, Integer.MAX_VALUE);
             unvisited.add(v);
         }
-//        for(Vertex v : graph.getVertices().values())
-//        {
-//            for(Edge e : v.getNeighbours())
-//            {
-//                time.put(e, Integer.MAX_VALUE);
-//            }
-//        }
+
         current = startVertex;
-       // timeCost.put(startVertex, 0);
-        minTimeVisitedVertex.put(startVertex, 0.0);
-        System.out.println("CURR: "+ current.getStop());
+        minTimeVisitedVertex.put(startVertex, 0);
         while(unvisited.size() > 0)
         {
 
             if(!unvisited.contains(startVertex))
             {
                 current = getMinDistance(minTimeVisitedVertex, unvisited);
-                System.out.println("CURR: "+ current.getStop());
             }
+            counterVertex++;
             if(current == endVertex) {
                 break;
             }
@@ -64,41 +59,32 @@ public class Dijkstra {
             {
                 if(unvisited.contains(neighbour.getEndStop()) && neighbour.getStartTime() >= startTime && neighbour.getStartTime() >= minTimeVisitedVertex.get(neighbour.getStart() ))
                 {
-                    System.out.println("NEIGHBOUR: "+ neighbour.toString());
                     neighbour.setCost(minTimeVisitedVertex.get(neighbour.getStart()), "");
-                    System.out.println("visited: "+ minTimeVisitedVertex.get(neighbour.getStart()));
-                    System.out.println("neighbour cost + waiting time: "+ neighbour.getCost());
-//                    System.out.println("cost: "+ neighbour.getCost());
-                    double timeToArriveAtNeighbourVertex = neighbour.getCost();
+                    int timeToArriveAtNeighbourVertex = neighbour.getCost();
                     if(timeToArriveAtNeighbourVertex > 0)
                     {
-                        double newTimeVisitedVertex = minTimeVisitedVertex.get(current) + timeToArriveAtNeighbourVertex;
+                        int newTimeVisitedVertex = minTimeVisitedVertex.get(current) + timeToArriveAtNeighbourVertex;
                         if (newTimeVisitedVertex < minTimeVisitedVertex.get(neighbour.getEndStop()))
                         {
-                           // timeCost.put(neighbour.getEndStop(), newTimeVisitedVertex);
                             minTimeVisitedVertex.put(neighbour.getEndStop(), newTimeVisitedVertex);
                             parentPath.put(neighbour.getEndStop(), neighbour);
-                            path.add(neighbour);
                         }
                     }
                 }
             }
-            for(Vertex v : minTimeVisitedVertex.keySet())
-            {
-                System.out.println("v: "+v.getStop() + " :  "+ minTimeVisitedVertex.get(v));
-            }
         }
-        //printPathToDestination(path,destination);
-        printWell(parentPath, endVertex, startVertex);
+        //printPath(parentPath, endVertex, startVertex);
+        System.out.println(counterVertex);
+        counterVertex =0;
     }
 
-    private void printWell(HashMap<Vertex,Edge> parentPath, Vertex child, Vertex start)
+    private void printPath(HashMap<Vertex,Edge> parentPath, Vertex child, Vertex start)
     {
         Vertex tmp = child;
         if(parentPath.get(child) != null )
         {
             child = parentPath.get(child).getStart();
-            printWell(parentPath, child, start);
+            printPath(parentPath, child, start);
             System.out.println("\u001B[35m"+parentPath.get(tmp).toString()+"\u001B[0m");
         }
 
@@ -106,7 +92,7 @@ public class Dijkstra {
     }
 
 
-    public Vertex getMinDistance(HashMap<Vertex, Double> minTimeVisitedVertex, HashSet<Vertex> unvisited)
+    public Vertex getMinDistance(HashMap<Vertex, Integer> minTimeVisitedVertex, HashSet<Vertex> unvisited)
     {
         double minDistance = Double.MAX_VALUE;
         Vertex minVertex = null;

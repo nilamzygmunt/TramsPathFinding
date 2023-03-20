@@ -1,10 +1,8 @@
 package Algorithm;
 
-import Graph.Vertex;
+import Graph2.Vertex;
 
-public class TransferHeuristic implements Heuristic{
-    @Override
-    public double getHeuristicValue(Vertex current, Vertex end) {
-        return 0;
-    }
+public interface TransferHeuristic {
+    int getHeuristicValue(Vertex current, double endXCoordinate, double endYCordinate);
+
 }

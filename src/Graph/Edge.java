@@ -4,8 +4,6 @@ public class Edge {
     private Vertex start;
     private Vertex endStop;
 
-    public EdgeDistanceCounting edgeDistanceCounting = new TransferDistanceCounting();
-
     public Edge getParentEdge() {
         return parentEdge;
     }
@@ -19,7 +17,7 @@ public class Edge {
     private int endTime;
     private String line;
     private String company;
-    private double cost;
+    private int cost;
     Edge(Vertex start, Vertex endStop, int startTime, int endTime, String line, String company)
     {
         this.start = start;
@@ -69,12 +67,12 @@ public class Edge {
         this.company = company;
     }
 
-    public double getCost() {
+    public int getCost() {
         return cost;
     }
 
-    public void setCost(double previousEndTime, String line2) {
-        this.cost = Math.abs((endTime - previousEndTime)%(24*3600) )+ edgeDistanceCounting.calculateWaitingTime(startTime, previousEndTime, line ,line2);
+    public void setCost(int previousEndTime, String line2) {
+        this.cost = Math.abs((endTime - previousEndTime)%(24*3600) );
     }
 
     public void setCost2(double previousEndTime, String previousLine)
@@ -109,10 +107,6 @@ public class Edge {
         m = (seconds - (3600 *h))/60;
         s = (seconds -(3600 *h) - (m * 60));
         return h+":"+m+":"+s;
-    }
-    public void setStrategy(EdgeDistanceCounting edgeDistanceCounting)
-    {
-        this.edgeDistanceCounting = edgeDistanceCounting;
     }
 
     @Override
