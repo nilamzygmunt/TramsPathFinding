@@ -60,8 +60,6 @@ public class AStarTransfers implements PathSearchingAlgorithm
                endLines.add(v.getLine());
             }
         }
-
-
         List<Vertex> open = new ArrayList<Vertex>();
         List<Vertex> closed = new ArrayList<Vertex>();
         HashMap<Vertex, Vertex> childParent = new  HashMap<Vertex, Vertex>();
@@ -83,12 +81,13 @@ public class AStarTransfers implements PathSearchingAlgorithm
                 {
                     current = vertex;
                     currentCost = f.get(vertex);
+
                 }
             }
             closedTimes++;
             if(closedTimes % 5000 == 0)
                 System.out.println(closedTimes);
-//            System.out.println("CURR: "+ current.toString());
+//            closedTimesSystem.out.println("CURR: "+ current.toString());
 //            System.out.println("f CURR: "+ f.get(current));
             if(current.getEndStop().equals(destination)) {
                 endVertex = current;
@@ -98,7 +97,6 @@ public class AStarTransfers implements PathSearchingAlgorithm
             closed.add(current);
             for(Vertex neighbour : getNeighbours(current))
             {
-
                 if(!open.contains(neighbour) && !closed.contains(neighbour))
                 {
                     open.add(neighbour);
@@ -123,11 +121,12 @@ public class AStarTransfers implements PathSearchingAlgorithm
                             closed.remove(neighbour);
                         }
                     }
+
                 }
             }
        }
         //printPathToDestination(path,destination);
-        //printWell(childParent, endVertex);
+        printWell(childParent, endVertex);
         counter.add(closedTimes);
         closedTimes = 0;
     }
@@ -136,9 +135,20 @@ public class AStarTransfers implements PathSearchingAlgorithm
     {
         if((sameLine(current, neighbour) && !sameTime(current, neighbour)) || current.getEndTime() > neighbour.getStartTime())
             return 1000000000;
+        if(sameLine(current, neighbour) && sameTime(current, neighbour) && (!current.getStart().equals(neighbour.getEndStop())))
+            return 1;
+        if(current.getLine().equals("")) return 0;
+        return 1000;
+
+    }
+
+    private int getDistanceModification(Vertex current, Vertex neighbour)
+    {
+        if((sameLine(current, neighbour) && !sameTime(current, neighbour)) || current.getEndTime() > neighbour.getStartTime())
+            return 1000000000;
         if(!isEndLine(neighbour))
             return 1000000;
-        if(sameLine(current, neighbour) && sameTime(current, neighbour))
+        if(sameLine(current, neighbour) && sameTime(current, neighbour) && (!current.getStart().equals(neighbour.getEndStop())))
             return 1;
         if(current.getLine().equals("")) return 0;
         return 1000;

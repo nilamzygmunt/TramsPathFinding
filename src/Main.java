@@ -16,7 +16,7 @@ public class Main
         tester.executeTests();
 //        AStarTransfers astar = new AStarTransfers();
 //        astar.loadGarph();
-//        astar.findShortestPath("Prusa", "Borowska", 12*3600);
+//        astar.findShortestPath("KROMERA", "DH Astra", 12*3600);
     }
 
 

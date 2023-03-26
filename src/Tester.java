@@ -44,6 +44,7 @@ public class Tester {
         //System.out.println("shortest path for: "+ start+" "+end);
         algorithm.findShortestPath(start,end,timeInSeconds);
         algorithm.printGraph();
+        System.out.println();
     }
 
 }
