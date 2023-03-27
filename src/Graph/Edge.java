@@ -71,25 +71,8 @@ public class Edge {
         return cost;
     }
 
-    public void setCost(int previousEndTime, String line2) {
+    public void setCost(int previousEndTime) {
         this.cost = Math.abs((endTime - previousEndTime)%(24*3600) );
-    }
-
-    public void setCost2(double previousEndTime, String previousLine)
-    {
-        System.out.println("times: "+previousEndTime + " " + startTime);
-        System.out.println("lines: "+previousLine + " " + line);
-        System.out.println(previousEndTime != startTime || !previousLine.equals(line));
-
-        if(previousEndTime != startTime || !previousLine.equals(line))
-        {
-            this.cost = 1;
-        }
-        this.cost = 0;
-    }
-    public void setCost2(int cost)
-    {
-        this.cost = cost;
     }
 
     public void setStart(Vertex start) {

@@ -71,14 +71,14 @@ public class AStar implements PathSearchingAlgorithm
 
                     open.add(neighbour.getEndStop());
                     h.put(neighbour.getEndStop(), heuristic.getHeuristicValue(neighbour.getEndStop(), endVertex));
-                    neighbour.setCost(g.get(neighbour.getStart()), "");
+                    neighbour.setCost(g.get(neighbour.getStart()));
                     g.put(neighbour.getEndStop(), g.get(current) + neighbour.getCost());
                     f.put(neighbour.getEndStop(), g.get(neighbour.getEndStop()) + h.get(neighbour.getEndStop()));
                     parentPath.put(neighbour.getEndStop(), neighbour);
                 }
                 else if(neighbour.getStartTime() > startTime && neighbour.getStartTime() >= g.get(neighbour.getStart()))
                 {
-                    neighbour.setCost(g.get(neighbour.getStart()),"");
+                    neighbour.setCost(g.get(neighbour.getStart()));
 
                     if(g.get(neighbour.getEndStop()) > g.get(current) + neighbour.getCost())
                     {
