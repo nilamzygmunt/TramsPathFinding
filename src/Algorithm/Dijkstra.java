@@ -59,7 +59,7 @@ public class Dijkstra implements PathSearchingAlgorithm
             {
                 if(unvisited.contains(neighbour.getEndStop()) && neighbour.getStartTime() >= startTime && neighbour.getStartTime() >= minTimeVisitedVertex.get(neighbour.getStart() ))
                 {
-                    neighbour.setCost(minTimeVisitedVertex.get(neighbour.getStart()), "");
+                    neighbour.setCost(minTimeVisitedVertex.get(neighbour.getStart()));
                     int timeToArriveAtNeighbourVertex = neighbour.getCost();
                     if(timeToArriveAtNeighbourVertex > 0)
                     {

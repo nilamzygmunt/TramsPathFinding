@@ -126,7 +126,7 @@ public class AStarTransfers implements PathSearchingAlgorithm
             }
        }
         //printPathToDestination(path,destination);
-        printWell(childParent, endVertex);
+        printPath(childParent, endVertex);
         counter.add(closedTimes);
         closedTimes = 0;
     }
@@ -167,12 +167,12 @@ public class AStarTransfers implements PathSearchingAlgorithm
         return current.getEndTime() == neighbour.getStartTime();
     }
 
-    private void printWell(HashMap<Vertex, Vertex> childparent, Vertex child)
+    private void printPath(HashMap<Vertex, Vertex> childparent, Vertex child)
     {
         if(childparent.get(child) != null)
         {
 
-            printWell(childparent, childparent.get(child));
+            printPath(childparent, childparent.get(child));
             System.out.println("\u001B[35m" + child.toString() + "\u001B[0m");
         }
     }
